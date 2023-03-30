@@ -1,7 +1,17 @@
 import { formatValue } from '../helpers/formatValue';
 
+type IEvent = {
+  id: number,
+  payload: any
+}
+
 export class TableManager {
-  constructor(tableElement) {
+
+  tableElement: HTMLTableElement;
+  events: IEvent[];
+  dataFormat: any;
+
+  constructor(tableElement: HTMLTableElement) {
     this.tableElement = tableElement;
     this.events = [];
     this.tableElement.innerHTML = '';
@@ -13,7 +23,7 @@ export class TableManager {
     this.tableElement.innerHTML = '';
   }
 
-  setFormat(dataFormat) {
+  setFormat(dataFormat: any) {
 
     this.clearTable();
 
@@ -32,9 +42,15 @@ export class TableManager {
     this.tableElement.appendChild(headerRow);
   }
 
-  addEvent(eventData) {
+  deleteEvent(eventId: number) {
+    this.events.splice(this.events.findIndex(e => e.id === eventId));
+    document.getElementById('event-' + eventId).remove();
+  }
+
+  addEvent(eventData: any) {
 
     if (!this.dataFormat) throw new Error('You need to set dataFormat before adding an event');
+    const eventId = this.events.length;
 
     const keys = Object.keys(eventData);
     const cols = keys.map(key => {
@@ -44,12 +60,19 @@ export class TableManager {
     })
     const row = document.createElement('tr');
     
+    
     cols.forEach((col) => {
       row.appendChild(col);
     })
     
-    this.events.push({...eventData, id: this.events.length});
-    row.id = 'event-' + this.events.length;
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'closeBtn';
+    closeBtn.addEventListener('click', () => this.deleteEvent(eventId));
+    
+    row.querySelector('*:last-child').appendChild(closeBtn);
+    
+    this.events.push({...eventData, id: eventId});
+    row.id = 'event-' + eventId;
     this.tableElement.appendChild(row);
   }
 }

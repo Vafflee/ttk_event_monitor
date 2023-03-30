@@ -5,7 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
-    'main': path.resolve(__dirname, './src/index.js')
+    'main': path.resolve(__dirname, './src/index.ts')
   },
   output: {
     path: path.resolve(__dirname, './build'),
@@ -19,12 +19,34 @@ module.exports = {
     port: 3000,
     hot: true,
   },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          // Creates `style` nodes from JS strings
+          "style-loader",
+          // Translates CSS into CommonJS
+          "css-loader",
+          // Compiles Sass to CSS
+          "sass-loader",
+        ],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, './src/index.html'), to: path.resolve(__dirname, './build/index.html') },
-        { from: path.resolve(__dirname, './src/style.css'), to: path.resolve(__dirname, './build/style.css') },
+        { from: path.resolve(__dirname, './public/index.html'), to: path.resolve(__dirname, './build/index.html') },
       ],
     }),
     new webpack.HotModuleReplacementPlugin(),

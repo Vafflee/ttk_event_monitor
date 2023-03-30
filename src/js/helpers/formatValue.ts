@@ -1,4 +1,4 @@
-export function formatValue(value, format) {
+export function formatValue(value: string, format: string) {
   if (format === 'date') {
     return new Date(value).toLocaleString();
   } else {

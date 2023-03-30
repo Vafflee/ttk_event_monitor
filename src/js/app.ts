@@ -1,16 +1,29 @@
-const { TableManager } = require("./components/tableManager");
+import { TableManager } from "./components/tableManager";
+
+type IConnectionStatus = {
+  connected: boolean,
+  error: string | null
+}
 
 export class App {
 
+  input: HTMLInputElement;
+  connectBtn: HTMLButtonElement;
+  statusLabel: HTMLLabelElement;
+  table: HTMLTableElement;
+  ws: WebSocket | undefined;
+  tableManager: TableManager;
+  connectionStatus: IConnectionStatus
+
   constructor() {
-    this.input = document.getElementById('url');
-    this.connectBtn = document.getElementById('connectBtn');
-    this.statusLabel = document.getElementById('status');
-    this.table = document.getElementById('table');
+    this.input = document.getElementById('url') as HTMLInputElement;
+    this.connectBtn = document.getElementById('connectBtn') as HTMLButtonElement;
+    this.statusLabel = document.getElementById('status') as HTMLLabelElement;
+    this.table = document.getElementById('table') as HTMLTableElement;
 
     this.ws = undefined;
 
-    this.tableManager = new TableManager(table);
+    this.tableManager = new TableManager(this.table);
 
     this.setStatus({
       connected: false,
@@ -23,7 +36,7 @@ export class App {
     });
   }
 
-  setStatus(status) {
+  setStatus(status: IConnectionStatus) {
     this.statusLabel.innerText = status.connected ? 'Connected' : 'Disconnected';
     this.connectionStatus = status;
 
@@ -36,7 +49,7 @@ export class App {
     }
   }
 
-  connect(url) {
+  connect(url: string) {
     if (this.connectionStatus.connected && this.ws) {
       this.setStatus({
         connected: false,
